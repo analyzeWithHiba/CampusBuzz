@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Campus Events | Admin Portal</title>
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .section-view {
+            display: none;
+        }
+
+        .section-view.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" class="text-blue">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Campus Events
+            </div>
+
+            <div class="text-sm text-gray font-semibold mb-2" style="padding-left: 1rem; text-transform: uppercase;">
+                Navigation</div>
+
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" data-target="dashboardView">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+                        <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+                        <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+                        <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="#" class="nav-item" data-target="eventsView">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    Manage Events
+                </a>
+                <a href="#" class="nav-item" data-target="departmentsView">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                    Departments
+                </a>
+                <a href="#" class="nav-item" data-target="registrationsView">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    Registrations
+                </a>
+                <a href="#" class="nav-item" data-target="resultsView">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                    </svg>
+                    Results
+                </a>
+                <a href="#" class="nav-item" data-target="studentsView">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Students
+                </a>
+                <a href="#" class="nav-item" onclick="Store.logout(); return false;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="flex justify-between items-center mb-8">
+                <div></div>
+                <div class="flex items-center gap-4">
+                    <div id="notifBtn" style="cursor: pointer; position: relative;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-gray)"
+                            stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span id="notifBadge"
+                            style="position: absolute; top: 0; right: 0; background: var(--danger); width: 8px; height: 8px; border-radius: 50%; display: none;"></span>
+                    </div>
+
+                    <!-- Notifications Dropdown -->
+                    <div id="notifDropdown" class="notif-dropdown hidden">
+                        <div class="px-5 py-4 border-b"
+                            style="border-bottom: 1px solid var(--border-color); position: sticky; top: 0; background: white; z-index: 2;">
+                            <h3 class="text-md font-bold">Notifications</h3>
+                        </div>
+                        <div id="notifList" class="flex flex-col"></div>
+                    </div>
+
+                    <div class="flex items-center gap-2" style="cursor: pointer;"
+                        onclick="document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active')); document.getElementById('profileView').classList.add('active'); renderProfile();">
+                        <div id="adminInitial"
+                            style="width: 32px; height: 32px; border-radius: 50%; background-color: var(--primary-blue); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; overflow: hidden;">
+                            AU</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DASHBOARD VIEW -->
+            <section id="dashboardView" class="section-view active">
+                <div class="header">
+                    <div>
+                        <h1>Admin Dashboard</h1>
+                        <p>Manage events, registrations, and results</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <div class="stat-card">
+                        <div class="stat-label">
+                            Total Events
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </div>
+                        <div class="stat-value" id="stat-events">0</div>
+                        <div class="text-sm text-gray">All time</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">
+                            Registrations
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-value" id="stat-regs">0</div>
+                        <div class="text-sm text-gray">Active participants</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">
+                            Departments
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-value" id="stat-depts">0</div>
+                        <div class="text-sm text-gray">Total departments</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">
+                            Students
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </div>
+                        <div class="stat-value" id="stat-students">0</div>
+                        <div class="text-sm text-gray">Registered users</div>
+                    </div>
+                </div>
+
+                <div class="card" style="padding: 1.5rem;">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl">Recent Events</h2>
+                        <a href="#" class="text-sm"
+                            onclick="document.querySelector('[data-target=\'eventsView\']').click(); return false;">View
+                            All →</a>
+                    </div>
+                    <div id="recentEventsList">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- EVENTS VIEW -->
+            <section id="eventsView" class="section-view">
+                <div class="header">
+                    <div>
+                        <h1>Manage Events</h1>
+                        <p>Create, edit, delete and publish events</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openModal('createEventModal')">+ Create Event</button>
+                </div>
+                <!-- Event List -->
+                <div id="adminEventsList" class="grid grid-cols-3 gap-6">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- DEPARTMENTS VIEW -->
+            <section id="departmentsView" class="section-view">
+                <div class="header">
+                    <div>
+                        <h1>Departments</h1>
+                        <p>Manage college departments</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openModal('createDeptModal')">+ Add Department</button>
+                </div>
+                <div id="departmentsList" class="flex flex-col gap-4">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- REGISTRATIONS VIEW -->
+            <section id="registrationsView" class="section-view">
+                <div class="header">
+                    <div>
+                        <h1>Registrations</h1>
+                        <p>View and manage event signups</p>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="grid grid-cols-5 gap-4">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label class="form-label">Search</label>
+                            <input type="text" id="regSearchInput" class="form-input" placeholder="Name or ID"
+                                onkeyup="renderRegistrations()">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label class="form-label">Filter by Event</label>
+                            <select id="regEventFilter" class="form-select" onchange="renderRegistrations()">
+                                <option value="all">All Events</option>
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label class="form-label">Filter by Dept</label>
+                            <select id="regDeptFilter" class="form-select" onchange="renderRegistrations()">
+                                <option value="all">All Departments</option>
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label class="form-label">Filter by Status</label>
+                            <select id="regStatusFilter" class="form-select" onchange="renderRegistrations()">
+                                <option value="all">All Statuses</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Rejected">Rejected</option>
+                                <option value="Attended">Attended</option>
+                                <option value="Absent">Absent</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label class="form-label">Filter by Date</label>
+                            <input type="date" id="regDateFilter" class="form-input" onchange="renderRegistrations()">
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center mt-4 pt-4 border-t"
+                        style="border-top: 1px solid var(--border-color);">
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="selectAllRegs" onchange="toggleSelectAllRegs()">
+                            <label for="selectAllRegs" class="text-sm font-medium">Select All</label>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="btn btn-secondary text-sm"
+                                onclick="bulkActionRegistrations('Approved')">Approve All</button>
+                            <button class="btn btn-danger text-sm" onclick="bulkActionRegistrations('Rejected')">Reject
+                                All</button>
+                            <button class="btn btn-secondary text-sm" onclick="exportRegistrations('csv')">Export
+                                CSV</button>
+                            <button class="btn btn-secondary text-sm" onclick="exportRegistrations('excel')">Export
+                                Excel</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="padding: 0; overflow: hidden;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                        <thead style="background-color: var(--bg-light); border-bottom: 1px solid var(--border-color);">
+                            <tr>
+                                <th style="padding: 1rem; width: 40px;"></th>
+                                <th
+                                    style="padding: 1rem; font-weight: 500; font-size: 0.875rem; color: var(--text-gray);">
+                                    Student</th>
+                                <th
+                                    style="padding: 1rem; font-weight: 500; font-size: 0.875rem; color: var(--text-gray);">
+                                    Event</th>
+                                <th
+                                    style="padding: 1rem; font-weight: 500; font-size: 0.875rem; color: var(--text-gray);">
+                                    Status</th>
+                                <th
+                                    style="padding: 1rem; font-weight: 500; font-size: 0.875rem; color: var(--text-gray);">
+                                    Date</th>
+                                <th
+                                    style="padding: 1rem; font-weight: 500; font-size: 0.875rem; color: var(--text-gray); text-align: right;">
+                                    Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="registrationsTableBody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- RESULTS VIEW -->
+            <section id="resultsView" class="section-view">
+                <div class="header">
+                    <div>
+                        <h1>Results & Rankings</h1>
+                        <p>Publish event results</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <!-- Result Entry Panel -->
+                    <div class="card">
+                        <h3 class="text-lg font-bold mb-4">Manual Entry</h3>
+                        <form id="manualResultForm" onsubmit="event.preventDefault(); submitManualResult();">
+                            <div class="form-group">
+                                <label class="form-label">Event</label>
+                                <select id="manualResultEvent" class="form-select" required>
+                                    <option value="">Select Event...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Student</label>
+                                <select id="manualResultStudent" class="form-select" required disabled>
+                                    <option value="">Select Student...</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="form-group">
+                                    <label class="form-label">Score / Marks</label>
+                                    <input type="number" id="manualResultScore" class="form-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Position</label>
+                                    <input type="text" id="manualResultPosition" class="form-input"
+                                        placeholder="e.g. 1st, 2nd">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Remarks</label>
+                                <input type="text" id="manualResultRemarks" class="form-input">
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Save Result</button>
+                        </form>
+                    </div>
+
+                    <!-- Bulk Upload Panel -->
+                    <div class="card">
+                        <h3 class="text-lg font-bold mb-4">Bulk Upload</h3>
+                        <p class="text-sm text-gray mb-4">Upload a CSV file containing results for an event. The file
+                            must contain headers: <code>Student ID</code>, <code>Score</code>, <code>Position</code>,
+                            <code>Remarks</code>
+                        </p>
+
+                        <div class="form-group">
+                            <label class="form-label">Target Event</label>
+                            <select id="bulkResultEvent" class="form-select" required>
+                                <option value="">Select Event...</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">CSV File</label>
+                            <input type="file" id="bulkResultFile" accept=".csv" class="form-input"
+                                style="padding: 0.5rem;" required>
+                        </div>
+
+                        <button id="btnBulkUpload" class="btn btn-primary" style="width: 100%;"
+                            onclick="handleBulkUpload()">Upload Results</button>
+                    </div>
+                </div>
+
+                <!-- Analytics Summary Cards -->
+                <div class="grid grid-cols-4 gap-4 mb-4" id="resultsAnalyticsContainer" style="display: none;">
+                    <div class="stat-card">
+                        <div class="stat-label">Highest Score</div>
+                        <div class="stat-value" id="analyticsHighestScore">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Average Score</div>
+                        <div class="stat-value" id="analyticsAvgScore">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Participants</div>
+                        <div class="stat-value" id="analyticsParticipants">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Passing Rate</div>
+                        <div class="stat-value" id="analyticsPassingRate">-</div>
+                    </div>
+                </div>
+
+                <!-- Leaderboard Table -->
+                <div class="card" style="padding: 0; overflow: hidden;">
+                    <div class="flex justify-between items-center p-4 border-b"
+                        style="border-bottom: 1px solid var(--border-color);">
+                        <h3 class="text-lg font-bold">Leaderboard</h3>
+                        <select id="leaderboardEventSelect" class="form-select" style="width: 250px;">
+                            <option value="">Select Event...</option>
+                        </select>
+                    </div>
+                    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                        <thead style="background-color: var(--bg-light); border-bottom: 1px solid var(--border-color);">
+                            <tr>
+                                <th
+                                    style="padding: 1rem; font-weight: 500; font-size: 0.875rem; color: var(--text-gray);">
+                                    Rank</th>
+                                <th
+                                    style="padding: 1rem; font-weight: 500; font-size: 0.875rem; color: var(--text-gray);">
+                                    Student</th>
+                                <th style="padding: 1rem; font-weight: 600; color: var(--text-gray);">
+                                    Event</th>
+                                <th style="padding: 1rem; font-weight: 600; color: var(--text-gray);">
+                                    Score</th>
+                                <th style="padding: 1rem; font-weight: 600; color: var(--text-gray);">
+                                    Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboardTableBody">
+                            <tr>
+                                <td colspan="5" style="padding: 1rem; text-align: center; color: var(--text-gray);">
+                                    Select an event to view leaderboard</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </section>
+
+
+            <!-- STUDENTS VIEW -->
+            <section id="studentsView" class="section-view">
+                <div class="header">
+                    <div>
+                        <h1>Students</h1>
+                        <p>Manage student accounts</p>
+                    </div>
+                </div>
+                <div class="card" style="padding: 0; overflow: hidden;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                        <thead style="background-color: var(--bg-light); border-bottom: 1px solid var(--border-color);">
+                            <tr>
+                                <th
+                                    style="padding: 1rem; font-weight: 500; font-size: 0.875rem; color: var(--text-gray);">
+                                    ID</th>
+                                <th
+                                    style="padding: 1rem; font-weight: 500; font-size: 0.875rem; color: var(--text-gray);">
+                                    Name</th>
+                                <th
+                                    style="padding: 1rem; font-weight: 500; font-size: 0.875rem; color: var(--text-gray); text-align: right;">
+                                    Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- PROFILE VIEW -->
+            <section id="profileView" class="section-view">
+                <div class="header">
+                    <div>
+                        <h1>User Profile</h1>
+                        <p>View your account details</p>
+                    </div>
+                </div>
+
+                <div class="profile-card" id="adminProfileCard">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Create/Edit Event Modal -->
+    <div id="createEventModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="eventModalTitle">Create Event</h2>
+                <button class="modal-close" onclick="closeModal('createEventModal')">&times;</button>
+            </div>
+            <form id="eventForm">
+                <input type="hidden" id="eventId">
+                <div class="form-group">
+                    <label class="form-label">Title</label>
+                    <input type="text" class="form-input" id="eventTitle" required>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label class="form-label">Department</label>
+                        <select class="form-select" id="eventDepartment" required>
+                            <!-- Populated by JS -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Type</label>
+                        <input type="text" class="form-input" id="eventType" required
+                            placeholder="e.g. Hackathon, Bootcamp, Seminar">
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="form-group">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-input" id="eventDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Time</label>
+                        <div class="flex gap-2">
+                            <input type="time" class="form-input" id="eventHm" required
+                                style="padding: 0.5rem; text-align: center; width: 60%;">
+                            <select class="form-input" id="eventAmpm" required
+                                style="padding: 0.5rem; text-align: center; width: 40%; appearance: none; -webkit-appearance: none; -moz-appearance: none; cursor: pointer;">
+                                <option value="AM" selected>AM</option>
+                                <option value="PM">PM</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Max Participants</label>
+                        <input type="number" class="form-input" id="eventMaxParticipants"
+                            placeholder="Leave empty for unlimited">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Venue</label>
+                    <input type="text" class="form-input" id="eventVenue" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-textarea" id="eventDesc" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Banner Image (Optional)</label>
+                    <input type="file" class="form-input" id="eventBanner" accept="image/*" style="padding: 0.5rem;">
+                </div>
+                <div class="flex justify-end gap-2 mt-4">
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('createEventModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create Department Modal -->
+    <div id="createDeptModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="deptModalTitle">Add Department</h2>
+                <button class="modal-close" onclick="closeModal('createDeptModal')">&times;</button>
+            </div>
+            <form id="deptForm">
+                <input type="hidden" id="deptId">
+                <div class="form-group">
+                    <label class="form-label">Department Name</label>
+                    <input type="text" class="form-input" id="deptName" required>
+                </div>
+                <div class="flex justify-end gap-2 mt-4">
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('createDeptModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Publish Result Modal -->
+    <div id="publishResultModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Publish Result / Update Status</h2>
+                <button class="modal-close" onclick="closeModal('publishResultModal')">&times;</button>
+            </div>
+            <form id="resultForm">
+                <input type="hidden" id="resultRegId">
+                <div class="form-group">
+                    <label class="form-label">Update Status</label>
+                    <select class="form-select" id="resultStatus" required>
+                        <option value="Registered">Registered</option>
+                        <option value="Attended">Attended</option>
+                        <option value="Result Published">Result Published</option>
+                    </select>
+                </div>
+                <div class="form-group" id="resultInputGroup" style="display: none;">
+                    <label class="form-label">Result Details (e.g., 1st Place)</label>
+                    <input type="text" class="form-input" id="resultText">
+                </div>
+                <div class="form-group" id="scoreInputGroup" style="display: none;">
+                    <label class="form-label">Score (Numeric)</label>
+                    <input type="number" class="form-input" id="resultScore" min="0" max="100">
+                </div>
+                <div class="flex justify-end gap-2 mt-4">
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('publishResultModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/store.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+
+</html>
